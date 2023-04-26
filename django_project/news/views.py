@@ -31,11 +31,23 @@ for article in soup.find_all('article'):
     print(yt_link)
 
     print()
+
     news.append({'summary': summary, 'headline': headline, 'yt_link': yt_link})
     csv_writer.writerow([headline, summary, yt_link])
 
 csv_file.close()
+toi_r = requests.get("https://timesofindia.indiatimes.com/briefs")
 
+toi_soup = BeautifulSoup(toi_r.content, 'html5lib')
+
+toi_headings = toi_soup.find_all('h2')
+
+toi_headings = toi_headings[0:-13]  # removing footers
+
+toi_news = []
+
+for th in toi_headings:
+    toi_news.append(th.text)
 
 def index(req):
-    return render(req, 'news/index.html', {'news': news})
+    return render(req, 'news/index.html', {'toi_news': toi_news, 'news': news})
